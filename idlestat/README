@@ -85,3 +85,14 @@ Feedback
 
 Please submit questions and comments to the Linaro sched-tools mailing list at
 sched-tools@lists.linaro.org with "idlestat" as part of the subject.
+
+我自己添加的 for Android
+--------
+1. 将idlestat source code全部复制到external目录下
+2. 进入build/target/product/目录：
+    1. 新建名字叫idlestat.mk文件，里面填充内容：
+        PRODUCT_PACKAGES := idlestat_static
+    2. 在core.mk文件添加如下内容：
+        $(call inherit-product, $(SRC_TARGET_DIR)/product/idlestat.mk)
+3. 进入AOSP的根目录执行 source build/envsetup.sh，选择lunch，mmm external/idlestat/
+4. 编译成功之后在 out目录的system/bin/目录下找到idlestat binary文件。
