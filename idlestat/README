@@ -1,0 +1,87 @@
+Introduction
+------------
+
+The purpose of idlestat is to measure how long we have been in the different
+idle and operating states.
+
+Idlestat uses kernel's FTRACE function to monitor and capture C-state and
+P-state transitions of CPUs over a time interval. It extracts the following
+information from trace file:
+	- Times when CPUs entered and exited a certain C-state
+	- Times when CPUs entered and exited a certain P-state
+	- Raised IRQs
+
+Following a successful run, idlestat calculates and reports the following
+information:
+	- Total, average, minimum and maximum time spent in each C-state,
+	per-CPU.
+	- Total, average, minimum and maximum time spent in each P-state,
+	per-CPU.
+	- Total, average, minimum and maximum time during which all CPUs in
+	a cluster were in the same C-state, per-cluster.
+	- Number of times a certain IRQ caused a CPU to exit idle state,
+	per-CPU and per-IRQ
+
+Requirements
+------------
+
+1. It must be run as root in order to access /sys/kernel/debug.
+2. It requires tracing to be enabled in the kernel.
+
+Also, IPI reporting requires appropriate tracepoints in the kernel.
+This is available for ARM and ARM64 since v3.17-rc1.  A patch for X86
+was submitted but still not merged upstream.  It can be retrieved here:
+https://lkml.org/lkml/2014/9/17/745
+
+Help
+----
+./idlestat -h will show all the options
+
+Example Usage
+-------------
+
+Trace mode:
+sudo ./idlestat --trace -f /tmp/mytrace -t 10
+
+Reporting mode (/tmp/mytrace already contains traces):
+sudo ./idlestat --import -f /tmp/mytrace
+
+Trace mode with workload (e.g. sleep, cyclictest):
+sudo ./idlestat --trace -f /tmp/mytrace -t 10 -- /bin/sleep 10
+sudo ./idlestat --trace -f /tmp/myoutput -t 10 -- cyclictest -t 4 -i 2000 -q -D 5
+
+Selective trace output
+sudo ./idlestat --import -f /tmp/mytrace -w
+sudo ./idlestat --import -f /tmp/mytrace -c -p
+sudo ./idlestat --import -f /tmp/mytrace -p -w
+
+Bugs
+----
+
+If you believe that you have encountered a bug, please file a bug report on
+Linaro Bugzilla at https://bugs.linaro.org. You may be prompted to register
+for a new account first.
+
+Once you log in, click on
+"New" --> "Power Management" --> "Idlestat" as the component. Then fill
+in the form.
+
+Helpful tips for filing a bug report:
+    1. Provide logs, be verbose as possible
+    2. Outline steps to reproduce the bug
+    3. Describe the environment you are running idlestat on (e.g. Android,
+        OpenEmbedded, Ubuntu, etc.)
+    4. What hardware you're using
+
+Contribution
+------------
+
+If you wish to submit patches to improve idlestat, please send them to
+the Linaro sched-tools mailing list at sched-tools@lists.linaro.org with
+"PATCH IDLESTAT" as the subject prefix.
+
+Feedback
+--------
+
+Please submit questions and comments to the Linaro sched-tools mailing list at
+sched-tools@lists.linaro.org with "idlestat" as part of the subject.
